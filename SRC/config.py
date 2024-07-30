@@ -16,6 +16,10 @@
 # 
 # =============================================================================
 # Options
+# Directory and file name settings
+directory = ''
+file_name1 = ''
+file_name = file_name1 + '.inp'
 #Grouping Methods: "Percentual_Thresholding", "None", "Kmeans_Clustering"
 Grouping_Method = "Percentual_Thresholding"
 
@@ -80,9 +84,6 @@ class Material_Config:
     a_Plastic_E = -4000
     b_Plastic_E = 2.05
 
-# Directory and file name settings
-directory = ''
-file_name1 = ''
-file_name = file_name1 + '.inp'
+
 
 

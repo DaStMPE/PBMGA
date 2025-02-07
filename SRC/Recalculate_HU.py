@@ -16,7 +16,7 @@
 # =============================================================================
 import pandas as pd
 
-def process_material_data(file_name):
+def process_material_data(file_name,config):
     with open(file_name, 'r') as file:
         file_contents = file.readlines()
 
@@ -58,9 +58,9 @@ def process_material_data(file_name):
     HU_series = []
     for E in df_materials["E_z"]:
         # Recalculate Hu Cell specific
-        rho_ash_BM = (E / 4730) ** (1 / 1.56)
-        rho_app_BM = rho_ash_BM / 0.001
-        HU = (rho_app_BM - 47) / 1.122
+        rho_ash_BM = ((E - config.a_Youngs )/ config.b_Youngs) ** (1 / config.c_Youngs)
+        rho_QCT_BM = (rho_ash_BM - config.a_Ash)/ config.b_Ash
+        HU = (rho_QCT_BM - config.a_Qct) / config.b_Qct
         HU_series.append(HU)
     HU_data = pd.DataFrame({"HU": HU_series})
     df_materials['HU'] = HU_series
@@ -70,12 +70,12 @@ def process_material_data(file_name):
     Rho_ash_list = []
     for HU in df_materials["HU"]:
         if HU <= 0:
-            Rho_app = 47
+            Rho_app = config.a_Qct
         else:
-            Rho_app = 47 + 1.122 * HU
+            Rho_app = config.a_Qct + config.b_Qct * HU
         Rho_app_list.append(Rho_app)
         # Ash density is in g/cm^3 to comply with reference calculation method 
-        Rho_ash = (0.6 * Rho_app) * 0.001
+        Rho_ash = (config.c_Ash * Rho_app) * config.b_Ash
         Rho_ash_list.append(Rho_ash)
 
     df_materials_recalculation = pd.DataFrame({"Rho_app [kg/m^3]": Rho_app_list, "Rho_ash [g/cm^3]": Rho_ash_list})
@@ -86,11 +86,12 @@ def process_material_data(file_name):
     E_z_list = []
     for Rho_app, HU in df_materials_recalculation[["Rho_app [kg/m^3]", "HU"]].values:
         if HU > 0.0001:
-            E_z = 4730 * ((Rho_app * 0.001) ** 1.56)
+            E_z = config.a_Youngs + config.b_Youngs  * ((config.a_Ash + config.b_Ash*(config.a_Qct+config.b_Qct *HU) ) ** config.c_Youngs)
+            #E_z = config.a_Youngs + config.b_Youngs  * ((Rho_app * config.b_Ash) ** config.c_Youngs)
         else:
             E_z = 1
         E_z_list.append(E_z)
     df_materials_recalculation["E_z"] = E_z_list
     df_materials_recalculation = df_materials_recalculation.sort_values(by='E_z', ascending=False)
-
+    print("DF Materials recalculation \n", df_materials_recalculation)
     return df_materials_recalculation

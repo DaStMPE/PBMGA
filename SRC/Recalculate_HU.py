@@ -87,7 +87,6 @@ def process_material_data(file_name,config):
     for Rho_app, HU in df_materials_recalculation[["Rho_app [kg/m^3]", "HU"]].values:
         if HU > 0.0001:
             E_z = config.a_Youngs + config.b_Youngs  * ((config.a_Ash + config.b_Ash*(config.a_Qct+config.b_Qct *HU) ) ** config.c_Youngs)
-            #E_z = config.a_Youngs + config.b_Youngs  * ((Rho_app * config.b_Ash) ** config.c_Youngs)
         else:
             E_z = 1
         E_z_list.append(E_z)

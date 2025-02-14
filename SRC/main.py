@@ -24,7 +24,7 @@ from Write_Abaqus_Output import process_aniso_material_file
 from KMeans_Clustering import process_clustering
 def main():
    os.chdir(directory)
-   df = process_material_data(file_name)
+   df = process_material_data(file_name,Material_Config)
    if Grouping_Method == "None":
       df_materials_aniso = CalculateMaterial(df,Material_Config)
       print(df_materials_aniso)

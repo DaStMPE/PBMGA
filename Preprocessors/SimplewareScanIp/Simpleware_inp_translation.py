@@ -8,6 +8,28 @@ def extract_number(name):
     return match.group(1) if match else None
 
 
+def ensure_trailing_comma_if_needed(cur_line: str, next_line: str) -> str:
+    """
+    If cur_line starts with a number (i.e. is part of an element list),
+    does NOT already end with a comma, and next_line also starts with a number,
+    then add a comma to the end of cur_line.
+    Otherwise, leave cur_line untouched.
+    """
+    # Does this line start (after whitespace) with a digit?
+    is_elem_line = bool(re.match(r'^\s*\d', cur_line))
+    # Does the next line also start with a digit?
+    next_is_elem = bool(re.match(r'^\s*\d', next_line))
+    next_is_set = False
+    if next_line.startswith('*'):
+        next_is_set = True
+    if is_elem_line and next_is_elem:
+        core = cur_line.rstrip('\n').rstrip()
+        if not core.endswith(','):
+            return core + ',\n'
+    if next_is_set and cur_line.endswith(',') or cur_line.endswith(',\n'):
+        return cur_line.rstrip(',\n') + '\n'
+    return cur_line
+
 
 def preprocess_inp(input_file, output_file):
     elsets = {}
@@ -18,6 +40,7 @@ def preprocess_inp(input_file, output_file):
         solid_sections = []
         elset_material_dict = {}
 
+        # First pass: collect mapping of elset to material numbers
         for line in lines:
             if line.startswith('*Solid Section'):
                 elset_match = re.search(r'elset=(\w+)', line)
@@ -27,91 +50,101 @@ def preprocess_inp(input_file, output_file):
                     elset_name = elset_match.group(1)
                     material_name = material_match.group(1)
 
-                    # Apply extract_number to both elset and material
                     elset_num = extract_number(elset_name)
                     material_num = extract_number(material_name)
 
-                    # Store the numbers in the dictionary
                     if elset_num is not None and material_num is not None:
                         elset_material_dict[elset_num] = material_num
+
         i = 0
-        j=0
+        j = 0
+        pre_elset_name = None
+
+        # Second pass: write transformed lines
         while i < len(lines):
             line = lines[i].strip()
+            SKIP_PREFIXES = (
+                '** PARTS', 
+                '** ASSEMBLY',         # catches '** PARTS', '** ASSEMBLY', and any other **-lines
+                '*Part',
+                '*End Part',
+                '*End Instance',
+                '*End Assembly',
+                '*Assembly',
+                '*Instance',
+            )
+
+            # then inside your loop, replace all of those if’s with just:
             
-            # Process elsets
-        
+            # Handle *Elset sections
             if line.startswith('*Elset'):
-                # Extract the elset name
-                j=j+1
+                j += 1
                 elset_name = re.search(r'elset=(.*)', line).group(1)
                 elset_num = extract_number(elset_name)
                 if elset_num:
-                    if j > 1:
+                    if j > 1 and pre_elset_name:
                         pre_mat_name = elset_material_dict.get(pre_elset_name)
                         outfile.write(f"*Solid Section, elset=Set_{pre_elset_name}, material=Mat_{pre_mat_name}\n")
                     new_elset_name = f'Set_{elset_num}'
                     outfile.write(f"*Elset, elset={new_elset_name}\n")
                     pre_elset_name = elset_num
                 else:
-                    outfile.write(line + '\n')
-                # Write element numbers
-                i += 1
-                while not lines[i].strip().startswith('*') and i < len(lines):
                     outfile.write(lines[i])
+
+                # Write element numbers, adding commas only for true continuations
+                i += 1
+                while i < len(lines) and not lines[i].strip().startswith('*'):
+                    nxt = lines[i+1] if i+1 < len(lines) else ''
+                    fixed = ensure_trailing_comma_if_needed(lines[i], nxt)
+                    outfile.write(fixed)
                     i += 1
                 continue
+
+            # Handle end of part to close last section
             if line.startswith('*End Part'):
-                pre_mat_name = elset_material_dict.get(pre_elset_name)
-                outfile.write(f"*Solid Section, elset=Set_{pre_elset_name}, material=Mat{pre_mat_name}\n")
+                if pre_elset_name:
+                    pre_mat_name = elset_material_dict.get(pre_elset_name)
+                    outfile.write(f"*Solid Section, elset=Set_{pre_elset_name}, material=Mat_{pre_mat_name}\n")
+
             # Process materials
             if line.startswith('*Material'):
-                # Extract the material name
-                material_name = re.search(r'name=(.*)', line).group(1)
+                material_name = re.search(r'name=(.*)', lines[i]).group(1)
                 material_num = extract_number(material_name)
                 if material_num:
-                    # Rename the material
                     new_material_name = f'Mat_{material_num}'
                     materials[material_name] = new_material_name
                     outfile.write(f"*Material, name={new_material_name}\n")
                 else:
-                    outfile.write(line + '\n')
+                    outfile.write(lines[i])
                 i += 1
                 continue
-            if line.startswith('** Section'):
-                outfile.write("")
+
+            # Skip unwanted lines
+            if line.startswith('** Section') or line.startswith(',') or line.startswith('*Solid Section') or  line.startswith(SKIP_PREFIXES):
                 i += 1
                 continue
-            if line.startswith(','):
-                outfile.write("")
-                i += 1
-                continue
-            if line.startswith('*Solid Section'):
-                outfile.write("")
-                i += 1
-                continue
-            outfile.write(line + '\n')
+
+            # Default: write the line unchanged
+            outfile.write(lines[i])
             i += 1
+
 def remove_density_lines(inp_file_path):
     with open(inp_file_path, 'r') as file:
         lines = file.readlines()
 
-    # List to store modified lines
     modified_lines = []
     skip_next_line = False
 
-    for i, line in enumerate(lines):
-        # If the line contains *Density, set flag to skip it and the next line
+    for line in lines:
         if '*Density' in line:
-            skip_next_line = True  # Skip the next line
-            continue  # Skip this line
+            skip_next_line = True
+            continue
         elif skip_next_line:
-            skip_next_line = False  # Reset the flag to stop skipping
-            continue  # Skip the line immediately following *Density
+            skip_next_line = False
+            continue
         else:
-            modified_lines.append(line)  # Keep the line if it's not to be skipped
+            modified_lines.append(line)
 
-    # Write the modified lines back to the same file (overwrite)
     with open(inp_file_path, 'w') as file:
         file.writelines(modified_lines)
 
@@ -119,15 +152,10 @@ def remove_density_lines(inp_file_path):
 
 def update_materials_in_line(line):
     pattern = r'Mat_?(\d+)'
-
     def replacement(match):
-        # Extract the current material number and increment it.
         old_number = int(match.group(1))
         new_number = old_number + 1
-        # Always format as "Mat_<new_number>"
         return f"Mat_{new_number}"
-
-    # Replace all occurrences in the line.
     return re.sub(pattern, replacement, line)
 
 def update_sets_in_line(line):
@@ -273,14 +301,12 @@ def reorder_Set_and_Youngs(input_filename, output_filename):
 
 if __name__ == "__main__":
     os.chdir(directory)
-    input_file = file_name  
+    input_file = file_name
     output_file = input_file.rstrip(".inp") + "translated.inp"
     output_file2 = input_file.rstrip(".inp") + "translated_updated_Set.inp"
     output_file3 = input_file.rstrip(".inp") + "translated_reorderd_Set.inp"
-    preprocess_inp(input_file,output_file)
+    preprocess_inp(input_file, output_file)
     remove_density_lines(output_file)
     process_file(output_file, output_file2)
     reorder_Set_and_Youngs(output_file2, output_file3)
-
- 
-    
+  

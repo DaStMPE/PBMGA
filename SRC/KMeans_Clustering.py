@@ -59,6 +59,8 @@ def count_numbers_in_row(row):
 
 def perform_clustering(df_materials_aniso, num_clusters):
     columns_for_clustering = ['count_column', 'E_z']
+    df_materials_aniso.dropna(inplace=True)
+
     X = df_materials_aniso[columns_for_clustering]
 
     kmeans = KMeans(n_clusters=num_clusters, random_state=42)

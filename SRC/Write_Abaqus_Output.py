@@ -185,6 +185,8 @@ def process_aniso_material_file(df_materials_aniso, file_name, grouping_method,f
             new_elset_blocks[set_name] = ["*Elset, elset={}\n".format(set_name)]
             node_lines = (node_list)
             for line in node_lines:
+                line = line.replace(' ', '')
+                line = line.replace('\t', '')
                 new_elset_blocks[set_name].append(line + '\n')
             new_elset_blocks[set_name].append("*Solid Section, elset={}, material={}\n".format(set_name, material))
         target_marker = '*Material, name=Mat_1'
@@ -216,6 +218,8 @@ def process_aniso_material_file(df_materials_aniso, file_name, grouping_method,f
             new_elset_blocks[set_name] = ["*Elset, elset={}\n".format(set_name)]
             node_lines = (node_list)
             for line in node_lines:
+                line = line.replace(' ', '')
+                line = line.replace('\t', '')
                 new_elset_blocks[set_name].append(line + '\n')
                 
             new_elset_blocks[set_name].append("*Solid Section, elset={}, material={}\n".format(set_name, material))

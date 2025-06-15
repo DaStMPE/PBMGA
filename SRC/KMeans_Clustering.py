@@ -85,13 +85,64 @@ def plot_clustering(df_materials_aniso, plot_cluster_on):
         plt.title('KMeans Clustering Visualization')
         plt.show()
 
-def regroup_data(result_df):
+def regroup_data(result_df,file_name,num_clusters):
+    print('Min youngs: ', min(result_df['E_z']))
+
+    Grouping_error = (abs(result_df['E_z'] - result_df['mean_E_z'])).tolist()
+
+    errors = result_df['E_z'] - result_df['mean_E_z']
+    abs_errors = errors.abs()
+    squared_errors = errors ** 2
+
+    mean_error = abs_errors.mean()
+    max_error  = abs_errors.max()
+    rmse       = np.sqrt(squared_errors.mean())
+
+    print(f"MAE: {mean_error:.4f}")
+    print(f"Max AE: {max_error:.4f}")
+    print(f"RMSE: {rmse:.4f}")
+    # Print the statistics to the console
+    #print('Mean Grouping Error', mean_error)
+    #print('Max Grouping Error', max_error)
+    
+    # Write the statistics into a text file
+    with open(file_name.rstrip('.inp')+'_' +str(num_clusters)+'C' + "_grouping_error_stats.txt", "w") as file:
+        file.write(f"RMSE: {rmse}\n")
+        file.write(f"Mean Grouping Error: {mean_error}\n")
+        file.write(f"Max Grouping Error: {max_error}\n")
+    #print('Result DF ', result_df)
     regrouping_df = result_df[['New_Grouping', 'mean_E_z', 'Numbers', 'count_column']]
+    #print('Regrouping DF: ',regrouping_df)
+    report_df2 = pd.DataFrame()
+    report_df2['E_z'] = result_df['E_z']
+    report_df2['New E_z'] = result_df['mean_E_z']
+    report_df2['Grouping_error'] = Grouping_error
+    report_df2['Element_ID'] = result_df['Numbers']
+    
+    
     regrouping_df = regrouping_df.groupby('New_Grouping', as_index=False).agg({'mean_E_z': 'mean', 'count_column': 'sum', 'Numbers': list})
     regrouping_df['Numbers'] = regrouping_df['Numbers'].apply(lambda x: ', '.join(x))
     regrouping_df = regrouping_df.rename(columns={'New_Grouping': 'Group', 'mean_E_z': 'E_z'})
     regrouping_df = regrouping_df.sort_values(by='E_z', ascending=False).reset_index(drop=True)
     regrouping_df['Percentual_diff'] = abs(regrouping_df['E_z'].pct_change() * 100)
+    report_df2['E_z after Grouping'] = regrouping_df['E_z']
+    report_df2['Amount of Elements in Group'] = regrouping_df['count_column']
+    print(regrouping_df)
+    print(file_name)
+    #print('Regrouping DF: ',regrouping_df)
+    print('Report df: \n ', report_df2)
+    csv_name = file_name.rstrip('.inp')+'_' +str(num_clusters)+'C' +"_MaterialStatistics.csv"
+    report_df2.to_csv(csv_name, index=False)
+    # plt.figure(figsize=(8, 6))
+    # plt.hist(Grouping_error, bins=50, edgecolor='black')
+    # plt.xlabel('Values')
+    # plt.ylabel('Frequency')
+    # plt.title('Grouping Error')
+    
+    # Save the histogram as a PNG file before showing it
+    #plt.savefig(file_name.rstrip('.inp')+'_' +str(num_clusters)+'C' +"_grouping_error_histogram.png")
+    #print('Mean Grouping Error', sum(Grouping_error)/len(Grouping_error))
+    #print('Max Grouping Error', max(Grouping_error))
     return regrouping_df
 
 def plot_percentual_diff(df_materials_aniso, plot_df, plot_percentual_diff_on):
@@ -125,7 +176,7 @@ def process_clustering(file_name, df_materials_inp, num_clusters, plot_cluster_o
 
     plot_clustering(df_materials_aniso, plot_cluster_on)
 
-    regrouping_df = regroup_data(result_df)
+    regrouping_df = regroup_data(result_df,file_name,num_clusters)
     plot_percentual_diff(regrouping_df, df_materials_aniso, plot_percentual_diff_on)
 
     return regrouping_df

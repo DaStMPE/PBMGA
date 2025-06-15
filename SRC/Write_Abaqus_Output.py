@@ -168,7 +168,7 @@ def modify_string(s):
            s = s[:-1]
     return s
 
-def process_aniso_material_file(df_materials_aniso, file_name, grouping_method,file_name1, num_clusters,threshold_percentage, config):
+def process_aniso_material_file(df_materials_aniso, file_name, grouping_method,file_name1, num_clusters,threshold_percentage,num_equidistant_groups, config):
     output_file = "mapped_aniso_material.inp"
     copy_file(file_name, output_file)
     update_material_file(df_materials_aniso, output_file, output_file, grouping_method,config)
@@ -207,6 +207,61 @@ def process_aniso_material_file(df_materials_aniso, file_name, grouping_method,f
         threshold = str(threshold_percentage * 100)
         threshold = modify_string(threshold)
         os.rename('mapped_aniso_material.inp', file_name1 + '_' + threshold + 'per' + '.inp')
+    elif grouping_method == "Equidistant":
+        new_elset_blocks = {}
+        
+        for index, row in df_materials_aniso.iterrows():
+            set_name = row["Set_Name"]
+            node_list = row["Numbers"]
+            material = row["Mat"]  # Correctly format the material information
+            #print(material)
+            new_elset_blocks[set_name] = ["*Elset, elset={}\n".format(set_name)]
+            node_lines = (node_list)
+            for line in node_lines:
+                new_elset_blocks[set_name].append(line + '\n')
+            new_elset_blocks[set_name].append("*Solid Section, elset={}, material={}\n".format(set_name, material))
+        target_marker = '*Material, name=Mat_1'
+        start_marker = '*Elset, elset=Set_1'
+        end_marker = '**'
+        remove_lines_between_markers(output_file, output_file, start_marker, end_marker)
+        find_and_insert_blocks(output_file, output_file, target_marker, new_elset_blocks)
+        # ---------------------------
+        defined_materials = set()
+        for index, row in df_materials_aniso.iterrows():
+            mat = row["Mat"]
+            if isinstance(mat, str) and mat.startswith("Mat_"):
+                try:
+                    mat_num = int(mat.split("_")[1])
+                    defined_materials.add(mat_num)
+                except ValueError:
+                    # Skip if conversion fails
+                    continue
+        #----------------------------
+        with open(output_file, 'r') as file:
+            removal_lines = file.readlines()
+
+        max_value_Mat = int(list(new_elset_blocks.keys())[-1].strip("Set_"))
+        pattern = r'\*Material, name=Mat_(\d+)'
+        # filtered_lines = [line for line in removal_lines if not re.search(pattern, line) or int(re.search(pattern, line).group(1)) <= max_value_Mat]
+        # print(filtered_lines)
+
+        # with open(output_file, 'w') as file:
+        #     file.writelines(filtered_lines)
+        filtered_lines = []
+        for line in removal_lines:
+            match = re.search(pattern, line)
+            if match:
+                mat_num = int(match.group(1))
+                # Only keep the line if the material number is defined in your DataFrame.
+                if mat_num in defined_materials:
+                    filtered_lines.append(line)
+            else:
+                filtered_lines.append(line)
+
+        with open(output_file, 'w') as file:
+            file.writelines(filtered_lines)
+        
+        os.rename('mapped_aniso_material.inp', file_name1 + '_' + str(num_equidistant_groups) + 'EqiGroups' + '.inp')
     elif grouping_method =="Kmeans_Clustering":
         new_elset_blocks = {}
         df_materials_aniso["Numbers"] = df_materials_aniso["Numbers"].apply(lambda x: [x])

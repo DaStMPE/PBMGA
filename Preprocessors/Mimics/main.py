@@ -17,8 +17,8 @@
 import os
 from config import *
 import subprocess
-Mimics_Abaqus =  'Path to Mimics_Preprocessor_Abaqus.py'  
-Mimics_Translate = r'Path to Mimics_preprocessor.py'
+Mimics_Abaqus =  'Path to Mimics_Preprocessor_Abaqus.py' #Regular String    
+Mimics_Translate = r'Path to Mimics_preprocessor.py' #Raw String
 command = [abaqus_path, 'cae', 'noGUI=' + Mimics_Abaqus]
 
 

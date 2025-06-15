@@ -99,16 +99,51 @@ def process_data(file_name, df_materials_inp, threshold_percentage):
 
     threshold_grouping_df["count_column"] = 0
     threshold_grouping_df["Numbers"] = [[] for _ in range(len(values_list))]
-
+    squared_errors = []
+    error_list = []
     for _, row in merged_df.iterrows():
         closest_row = find_closest_row(row, threshold_grouping_df)
         threshold_grouping_df.at[closest_row.name, 'count_column'] += row['count_column']
         threshold_grouping_df.at[closest_row.name, 'Numbers'].append(row['Numbers'])
+        # compute the raw error
+        error = threshold_grouping_df.at[closest_row.name, 'E_z'] - row['E_z']
+        error_list.append(abs(error))
+        # store the squared error
+        squared_errors.append(error**2)
 
+    # once the loop is done, compute RMSE
+    rmse = np.sqrt(np.mean(squared_errors))
     threshold_grouping_df['Numbers'] = threshold_grouping_df['Numbers'].apply(join_list_elements)
     threshold_grouping_df['PercentualDiff'] = threshold_grouping_df['E_z'].pct_change() * 100
     threshold_grouping_df['PercentualDiff'] = threshold_grouping_df['PercentualDiff'].round(2)
     threshold_grouping_df = threshold_grouping_df[threshold_grouping_df['count_column'] != 0]
+    # Calculate summary statistics
+    mean_error = sum(error_list) / len(error_list)
+    max_error = max(error_list)
+    
+    # Print the statistics to the console
+    #print('Mean Grouping Error', mean_error)
+    #print('Max Grouping Error', max_error)s
+    threshold_grouping_df2 = threshold_grouping_df.reset_index(drop=True)
+    merged_df =merged_df.reset_index(drop=True)
+    
+    report_df2 = pd.DataFrame()
+    report_df2['E_z'] = merged_df['E_z']
+    #report_df2['New E_z'] = threshold_grouping_df['E_z']
+    report_df2['Grouping_error'] = error_list
+    report_df2['Element_ID'] = merged_df['Numbers']
+    report_df2['E_z after Grouping'] = threshold_grouping_df2['E_z']
+    report_df2['Amount of Elements in Group'] = threshold_grouping_df2['count_column']
+    print('Threshold grouping df: \n ', threshold_grouping_df2)
+    print(report_df2)
+    print(threshold_grouping_df['count_column'])
+    csv_name = file_name.rstrip('.inp')+'_' +str(threshold_percentage*100)+'Per' +"_MaterialStatistics.csv"
+    report_df2.to_csv(csv_name, index=False)
+    # Write the statistics into a text file
+    with open(file_name.rstrip('.inp')+'_' +str(threshold_percentage*100)+'Per' + "_grouping_error_stats.txt", "w") as file:
+        file.write(f"RMSE: {rmse}\n")
+        file.write(f"Mean Grouping Error: {mean_error}\n")
+        file.write(f"Max Grouping Error: {max_error}\n")
     return threshold_grouping_df
 
 

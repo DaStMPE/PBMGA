@@ -1,0 +1,9 @@
+# Core dependencies
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0  # For K-means clustering
+matplotlib>=3.7.0    # For plotting and visualization
+
+# Optional dependencies for preprocessing
+# Note: Abaqus Python environment is required for preprocessing
+# but it's not installed via pip as it comes with Abaqus installation 

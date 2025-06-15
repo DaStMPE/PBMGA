@@ -17,8 +17,8 @@
 import os
 from config import *
 import subprocess
-Simpleware_Abaqus =  'Path to the Simpleware_Preprocessor_Abaqus.py file'  
-Simpleware_Translate = r'Path to the Simpleware_inp_translation.py file'
+Simpleware_Abaqus =  'Path to the Simpleware_Preprocessor_Abaqus.py file'  #Regular String
+Simpleware_Translate = r'Path to the Simpleware_inp_translation.py file' #Raw String
 command = [abaqus_path, 'cae', 'noGUI=' + Simpleware_Abaqus]
 
 

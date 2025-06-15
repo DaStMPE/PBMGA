@@ -17,8 +17,8 @@
 # Options
 # Directory and file name settings
 abaqus_path = r'C:\SIMULIA\Commands\abaqus.bat'  # Tis might need adaptation to your system
-directory = r'Path to the folder where the inp file is located'
-file_name1 = 'Input file name without extension'
+directory = r'Path to the folder where the inp file is located' #Raw String
+file_name1 = 'Input file name without extension' #Normal String
 file_name = file_name1 + '.inp'
 
 

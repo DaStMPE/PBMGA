@@ -17,22 +17,28 @@
 # =============================================================================
 # Options
 # Directory and file name settings
-directory = ''
-file_name1 = ''
-file_name = file_name1 + '.inp'
-#Grouping Methods: "Percentual_Thresholding", "None", "Kmeans_Clustering"
-Grouping_Method = "Percentual_Thresholding"
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+directory = dir_path.rstrip('\SRC') + '\Tutorial\MaterialMappedMeshes' #Normal String, Change to your own directory where your data is located
+file_name1 = 'L3_Bonemat3_0MPa' #Filename without inp ending
+file_name = file_name1 + '.inp' #Normal String
+#Grouping Methods: "Percentual_Thresholding", "None", "Kmeans_Clustering, "Equidistant"
+Grouping_Method = "Percentual_Thresholding" #Normal String
 
 #Options for Adaptive Clustering / KMeans Clustering for Visualization
-plot_cluster_on = False
+plot_cluster_on = False #Boolean
 plot_percentual_diff_on = False
-
 # Amount of groups for KMeans
-num_clusters = 20  # Adjust as needed
+num_clusters = 10  # Adjust as needed
 
 # Percentual Threshold 
 threshold = 10
 threshold_percentage = threshold / 100
+
+#Options for Equidistant Histogram Visualization
+plot_equidistant_histogram_on = False
+# Amount of groups for Equidistant grouping
+num_equidistant_groups = 10
 
 class Material_Config:
     # Bonemat HU Calculation Parameters

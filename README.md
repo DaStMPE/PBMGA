@@ -105,7 +105,7 @@ class Material_Config:
 
 PBMGA supports multiple material grouping methods:
 
-1. **K-means Clustering**
+1. **Adaptive Clustering based on K-means Clustering**
    - Automatically groups bone tissue into distinct material groups
    - Configurable number of groups
    - Based on HU values and spatial distribution
@@ -115,10 +115,8 @@ PBMGA supports multiple material grouping methods:
    - Similar to Mimics's and Simplewares grouping method
    - Customizable threshold values
 
-3. **Custom Grouping**
-   - User-defined grouping rules
-   - Support for complex grouping criteria
-   - Integration with external classification algorithms
+3. **Percentual Thresholding**
+   - Percentual Threshold between material bins
 
 
 
@@ -160,8 +158,8 @@ This research was supported by the Aarhus University Research Foundation under G
 ## 📧 Contact
 
 For questions and support, please contact:
-- [Your Name](mailto:dast@mpe.dk)
-- [Project Issues](https://github.com/yourusername/PBMGA/issues)
+- [Daniel Strack](mailto:dast@mpe.dk)
+- [Project Issues](https://github.com/DaStMPE/PBMGA/issues)
 
 ## 🔄 Version History
 

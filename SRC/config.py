@@ -23,13 +23,13 @@ directory = dir_path.rstrip('\SRC') + '\Tutorial\MaterialMappedMeshes' #Normal S
 file_name1 = 'L3_Bonemat3_0MPa' #Filename without inp ending
 file_name = file_name1 + '.inp' #Normal String
 #Grouping Methods: "Percentual_Thresholding", "None", "Kmeans_Clustering, "Equidistant"
-Grouping_Method = "Percentual_Thresholding" #Normal String
+Grouping_Method = "Kmeans_Clustering" #Normal String
 
 #Options for Adaptive Clustering / KMeans Clustering for Visualization
 plot_cluster_on = False #Boolean
 plot_percentual_diff_on = False
 # Amount of groups for KMeans
-num_clusters = 10  # Adjust as needed
+num_clusters = 50  # Adjust as needed
 
 # Percentual Threshold 
 threshold = 10
@@ -48,7 +48,7 @@ class Material_Config:
     b_Ash = 0.001
 
     #Additional parameter not used in bonemat to linearly scale RhoApp to derive RhoAsh
-    c_Ash = 0.6
+    c_Ash = 0.0006
 
     a_Youngs = 0
     b_Youngs = 4730

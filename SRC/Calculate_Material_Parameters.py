@@ -37,7 +37,7 @@ def calculate_densities(df_materials_aniso,config):
         else:
             Rho_app = config.a_Qct + config.b_Qct * HU
         Rho_app_list.append(Rho_app)
-        Rho_ash = (config.c_Ash * Rho_app) * config.b_Ash
+        Rho_ash = (config.c_Ash * Rho_app)
         Rho_ash_list.append(Rho_ash)
     df_materials_aniso['Mat'] = df_materials_aniso.apply(lambda row: f"Mat_{row.name + 1}", axis=1)
     df_materials_aniso['Set_Name'] = df_materials_aniso.apply(lambda row: f"Set_{row.name + 1}", axis=1)

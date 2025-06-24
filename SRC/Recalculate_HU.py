@@ -75,7 +75,7 @@ def process_material_data(file_name,config):
             Rho_app = config.a_Qct + config.b_Qct * HU
         Rho_app_list.append(Rho_app)
         # Ash density is in g/cm^3 to comply with reference calculation method 
-        Rho_ash = (config.c_Ash * Rho_app) * config.b_Ash
+        Rho_ash = (config.c_Ash * Rho_app) 
         Rho_ash_list.append(Rho_ash)
 
     df_materials_recalculation = pd.DataFrame({"Rho_app [kg/m^3]": Rho_app_list, "Rho_ash [g/cm^3]": Rho_ash_list})

@@ -1,3 +1,16 @@
+# =============================================================================
+# Project Name: PBMGA Python Bone Modulus Grouping and Anisotropy 
+# Subproject: Simpleware Scan IP Preprocessor
+# File Name: Simpleware_inp_translation.py
+# Author: Daniel Strack
+# E-Mail: dast@mpe.au.dk
+# Description: This is the config file for the Simpleware ScanIp preprocessor
+# The output file that should be used for input into PBMGA is ending on translated_reorderd_Set.inp
+
+# License: MIT License Copyright (c) 2024 Daniel Strack 
+# (Refer to the LICENSE file for details)
+# =============================================================================
+
 import re
 import os
 from config import file_name, directory

@@ -1,3 +1,14 @@
+# =============================================================================
+# Project Name: PBMGA Python Bone Modulus Grouping and Anisotropy 
+# Subproject: Simpleware Scan IP Preprocessor
+# File Name: Simpleware_Preprocessor_Abaqus.py
+# Author: Daniel Strack
+# E-Mail: dast@mpe.au.dk
+# Description: This is a processing file for the Simpleware ScanIp preprocessor, Abaqus will be used to reorder the sets
+# License: MIT License Copyright (c) 2024 Daniel Strack 
+# (Refer to the LICENSE file for details)
+#
+# =============================================================================
 from abaqus import *
 from abaqusConstants import *
 import job

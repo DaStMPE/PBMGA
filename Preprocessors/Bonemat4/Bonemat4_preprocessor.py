@@ -1,3 +1,15 @@
+# =============================================================================
+# Project Name: PBMGA Python Bone Modulus Grouping and Anisotropy
+# File Name: Bonemat4_preprocessor.py
+# Author: Daniel Strack
+# E-Mail: dast@mpe.au.dk
+# Description: This script will remove the density lines from the material mapped Bonemat V4 file to comply with PBMGA expected input configuration.
+# 
+# License: MIT License Copyright (c) 2024 Daniel Strack 
+# (Refer to the LICENSE file for details)
+# 
+# 
+# =============================================================================
 import os
 # from config import *
 # from config import Material_Config

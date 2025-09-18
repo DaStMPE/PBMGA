@@ -1,4 +1,16 @@
-import re
+# =============================================================================
+# Project Name: PBMGA Python Bone Modulus Grouping and Anisotropy
+# File Name: Mimics_preprocessor.py
+# Author: Daniel Strack
+# E-Mail: dast@mpe.au.dk
+# Description: This is part of the Mimics preprocessing pipeline.
+# 
+# License: MIT License Copyright (c) 2024 Daniel Strack 
+# (Refer to the LICENSE file for details)
+# 
+# Example Usage:
+# 
+# =============================================================================import re
 import os
 from config import file_name, directory
 

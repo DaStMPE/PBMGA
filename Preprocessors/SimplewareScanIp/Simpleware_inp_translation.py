@@ -4,9 +4,7 @@
 # File Name: Simpleware_inp_translation.py
 # Author: Daniel Strack
 # E-Mail: dast@mpe.au.dk
-# Description: This is the config file for the Simpleware ScanIp preprocessor
-# The output file that should be used for input into PBMGA is ending on translated_reorderd_Set.inp
-
+# Description: 
 # License: MIT License Copyright (c) 2024 Daniel Strack 
 # (Refer to the LICENSE file for details)
 # =============================================================================

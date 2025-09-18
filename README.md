@@ -30,7 +30,7 @@ PBMGA is designed to streamline the implementation of non-linear and anisotropic
 ### Installation Steps
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/PBMGA.git
+git clone https://github.com/DaStMPE/PBMGA.git
 cd PBMGA
 ```
 

@@ -1,3 +1,17 @@
+# =============================================================================
+# Project Name: PBMGA Python Bone Modulus Grouping and Anisotropy
+# File Name: Mimics_Preprocessor_Abaqus.py
+# Author: Daniel Strack
+# E-Mail: dast@mpe.au.dk
+# Description: Part of the preprocessing pipeline for mimics.
+# 
+# License: MIT License Copyright (c) 2024 Daniel Strack 
+# (Refer to the LICENSE file for details)
+# 
+# Example Usage:
+
+# 
+# =============================================================================
 from abaqus import *
 from abaqusConstants import *
 import job

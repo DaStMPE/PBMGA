@@ -2,7 +2,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![DOI](https://img.shields.io/badge/DOI-10.XXXX/XXXXX-blue)](https://doi.org/10.XXXX/XXXXX)
+[![DOI](https://img.shields.io/badge/DOI-10.1088/1873-4030/ae5a3f-blue)](https://doi.org/10.1088/1873-4030/ae5a3f)
 
 A Python tool for processing and enhancing CT-mapped material properties in bone finite element analysis, with support for non-linear and anisotropic material models.
 

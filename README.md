@@ -132,7 +132,7 @@ This tool addresses the limitations of conventional bone material mapping tools 
 ## 📝 Citation
 
 If you use this software in your research, please cite:
-TBD
+
 ```bibtex
 @article{Strack_2026,
 doi = {10.1088/1873-4030/ae5a3f},

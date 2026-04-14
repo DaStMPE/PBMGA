@@ -134,12 +134,18 @@ This tool addresses the limitations of conventional bone material mapping tools 
 If you use this software in your research, please cite:
 TBD
 ```bibtex
-@article{your_paper_2024,
-    title={Your Paper Title},
-    author={Your Name and Co-authors},
-    journal={Journal Name},
-    year={2024},
-    doi={10.XXXX/XXXXX}
+@article{Strack_2026,
+doi = {10.1088/1873-4030/ae5a3f},
+url = {https://doi.org/10.1088/1873-4030/ae5a3f},
+year = {2026},
+month = {apr},
+publisher = {IOP Publishing},
+volume = {147},
+number = {5},
+pages = {05NT01},
+author = {Strack, Daniel and Nispel, Kati and Kirschke, Jan S and Subburaj, Karupppasamy},
+title = {PBMGA—python-based bone material grouping and anisotropy, a software tool to automatically assign advanced material properties},
+journal = {Medical Engineering & Physics}
 }
 ```
 
